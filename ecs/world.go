@@ -2,6 +2,7 @@ package ecs
 
 import (
 	"errors"
+	"fmt"
 )
 
 type IWorld interface {
@@ -51,8 +52,13 @@ func (world *World) GetEntities() []IEntity {
 
 func (world *World) GetEntitiesByComponentId(id string) (entities []*IEntity) {
 	for _, entity := range world.Entities {
-		for _, component := range entity.GetComponents() {
-			if component.GetId() == id {
+		components, err := entity.GetComponents()
+		if err != nil {
+			fmt.Println(err)
+		}
+		for _, component := range components {
+			cmp := *component
+			if cmp.GetId() == id {
 				entities = append(entities, &entity)
 			}
 		}
