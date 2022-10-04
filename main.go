@@ -8,15 +8,30 @@ import (
 func main() {
 	newWorld := ecs.World{}
 
-	var playerEntity ecs.IEntity = ecs.Entity{Id: "Yeah"}
-	var otherPlayerEntity ecs.IEntity = ecs.Entity{Id: "Yeah", Components: []ecs.IComponent{}}
-
-	collisionSystem := systems.CollisionSystem{
-		World: newWorld,
+	var playerEntity ecs.IEntity = &ecs.Entity{
+		Id: "Yeah",
+		Components: []ecs.IComponent{
+			&ecs.Component{Id: "position", Data: map[string]interface{}{"x": 0, "y": 0}},
+			ecs.CreateComponent("dimension", map[string]interface{}{"width": 32, "height": 32}),
+		},
 	}
 
-	newWorld.AddSystem(collisionSystem)
+	var otherPlayerEntity ecs.IEntity = &ecs.Entity{
+		Id: "Yeah2",
+		Components: []ecs.IComponent{
+			&ecs.Component{Id: "position", Data: map[string]interface{}{"x": 0, "y": 0}},
+			ecs.CreateComponent("dimension", map[string]interface{}{"width": 32, "height": 32}),
+		},
+	}
+
+	collisionSystem := systems.CollisionSystem{
+		World: &newWorld,
+	}
+
+	newWorld.AddSystem(&collisionSystem)
+
 	newWorld.AddEntity(playerEntity)
+	newWorld.AddEntity(otherPlayerEntity)
 
 	newWorld.Update()
 }

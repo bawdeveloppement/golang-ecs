@@ -12,15 +12,15 @@ type Entity struct {
 	Components []IComponent
 }
 
-func (entity Entity) GetId() string {
+func (entity *Entity) GetId() string {
 	return entity.Id
 }
 
-func (entity Entity) AddComponent(cmp IComponent) {
+func (entity *Entity) AddComponent(cmp IComponent) {
 	entity.Components = append(entity.Components, cmp)
 }
 
-func (entity Entity) GetComponent(id string) (cmp IComponent) {
+func (entity *Entity) GetComponent(id string) (cmp IComponent) {
 	for _, component := range entity.Components {
 		if component.GetId() == id {
 			cmp = component
@@ -30,6 +30,6 @@ func (entity Entity) GetComponent(id string) (cmp IComponent) {
 	return cmp
 }
 
-func (entity Entity) GetComponents() []IComponent {
+func (entity *Entity) GetComponents() []IComponent {
 	return entity.Components
 }
