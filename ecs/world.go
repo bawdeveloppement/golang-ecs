@@ -6,25 +6,28 @@ import (
 )
 
 type IWorld interface {
-	AddEntity(IEntity) error
+	AddEntity(*IEntity) error
 	GetEntity(string) *IEntity
-	GetEntities() []IEntity
+	GetEntities() []*IEntity
 	RemoveEntity(string) error
 	AddSystem(ISystem)
 	RemoveSystem(string) error
 	GetEntitiesByComponentId(string) []*IEntity
+	GetEntitiesWithComponents(...string) []*IEntity
 	Update()
 }
 
 type World struct {
-	Entities []IEntity
+	Entities []*IEntity
 	Systems  []ISystem
 }
 
-func (world *World) AddEntity(entity IEntity) (err error) {
+func (world *World) AddEntity(entity *IEntity) (err error) {
 	var found bool = false
 	for _, ent := range world.Entities {
-		if ent.GetId() == entity.GetId() {
+		entityLocalised := *entity
+		entLocalised := *ent
+		if entLocalised.GetId() == entityLocalised.GetId() {
 			found = true
 		}
 	}
@@ -39,39 +42,58 @@ func (world *World) AddEntity(entity IEntity) (err error) {
 
 func (world *World) GetEntity(id string) (ent *IEntity) {
 	for _, entity := range world.Entities {
-		if entity.GetId() == id {
-			ent = &entity
+		entityLocalised := *entity
+		if entityLocalised.GetId() == id {
+			ent = entity
 		}
 	}
 	return ent
 }
 
-func (world *World) GetEntities() []IEntity {
+func (world *World) GetEntities() (entities []*IEntity) {
 	return world.Entities
 }
 
 func (world *World) GetEntitiesByComponentId(id string) (entities []*IEntity) {
 	for _, entity := range world.Entities {
-		components, err := entity.GetComponents()
+		entityLocalised := *entity
+		components, err := entityLocalised.GetComponents()
 		if err != nil {
 			fmt.Println(err)
 		}
 		for _, component := range components {
 			cmp := *component
 			if cmp.GetId() == id {
-				entities = append(entities, &entity)
+				entities = append(entities, entity)
 			}
 		}
 	}
 	return entities
 }
 
+func (world *World) GetEntitiesWithComponents(v ...string) (entities []*IEntity) {
+	for _, entity := range world.Entities {
+		entityLocalised := *entity
+		var checkeds int = 0
+		for _, cmpName := range v {
+			if entityLocalised.HaveComponent(cmpName) {
+				checkeds = checkeds + 1
+			}
+		}
+		if checkeds == len(v) {
+			entities = append(entities, entity)
+		}
+	}
+	return entities
+}
+
 func (world *World) RemoveEntity(id string) (err error) {
-	var newEntities []IEntity = []IEntity{}
+	var newEntities []*IEntity = []*IEntity{}
 	var entityFound bool = false
 
 	for _, entity := range world.Entities {
-		if entity.GetId() != id {
+		localisedEntity := *entity
+		if localisedEntity.GetId() != id {
 			newEntities = append(newEntities, entity)
 		} else {
 			entityFound = true

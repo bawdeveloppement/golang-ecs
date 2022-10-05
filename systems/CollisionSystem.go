@@ -17,29 +17,29 @@ func (c *CollisionSystem) GetId() string {
 }
 
 func (c *CollisionSystem) Update() {
-	for _, firstEntity := range c.World.GetEntities() {
-		for _, secondEntity := range c.World.GetEntities() {
-			if firstEntity.GetId() != secondEntity.GetId() {
-
-				firstPositionComponentPointer, err := firstEntity.GetComponent("position")
+	for _, firstEntity := range c.World.GetEntitiesWithComponents("position", "dimension", "solid") {
+		firstEntityLocalised := *firstEntity
+		for _, secondEntity := range c.World.GetEntitiesWithComponents("position", "dimension", "solid") {
+			secondEntityLocalised := *secondEntity
+			if firstEntityLocalised.GetId() != secondEntityLocalised.GetId() {
+				firstPositionComponentPointer, err := firstEntityLocalised.GetComponent("position")
 				if err != nil {
 					log.Panicln(err)
 				}
 				firstPositionComponent := *firstPositionComponentPointer
+				firstX := firstPositionComponent.GetData("x").(int)
+				firstY := firstPositionComponent.GetData("y").(int)
 
-				var firstX int = firstPositionComponent.GetData("x").(int)
-				var firstY int = firstPositionComponent.GetData("y").(int)
-
-				firstDimensionComponentPointer, err := firstEntity.GetComponent("position")
+				firstDimensionComponentPointer, err := firstEntityLocalised.GetComponent("dimension")
 				if err != nil {
 					log.Panicln(err)
 				}
+
 				firstDimensionComponent := *firstDimensionComponentPointer
+				firstWidth := firstDimensionComponent.GetData("width").(int)
+				firstHeight := firstDimensionComponent.GetData("height").(int)
 
-				var firstWidth int = firstDimensionComponent.GetData("width").(int)
-				var firstHeight int = firstDimensionComponent.GetData("height").(int)
-
-				secondPositionComponentPointer, err := secondEntity.GetComponent("position")
+				secondPositionComponentPointer, err := secondEntityLocalised.GetComponent("position")
 				if err != nil {
 					log.Panicln(err)
 				}
@@ -48,7 +48,7 @@ func (c *CollisionSystem) Update() {
 				var secondX int = secondPositionComponent.GetData("x").(int)
 				var secondY int = secondPositionComponent.GetData("y").(int)
 
-				secondDimensionComponentPointer, err := secondEntity.GetComponent("position")
+				secondDimensionComponentPointer, err := secondEntityLocalised.GetComponent("dimension")
 				if err != nil {
 					log.Panicln(err)
 				}
@@ -58,7 +58,7 @@ func (c *CollisionSystem) Update() {
 				var secondHeight int = secondDimensionComponent.GetData("height").(int)
 
 				if firstX+firstWidth > secondX && firstX < secondX+secondWidth && firstY+firstHeight > secondY && firstY < secondY+secondHeight {
-					log.Println(firstEntity.GetId() + " in collision with " + secondEntity.GetId())
+					log.Println(firstEntityLocalised.GetId() + " in collision with " + secondEntityLocalised.GetId())
 				}
 			}
 		}

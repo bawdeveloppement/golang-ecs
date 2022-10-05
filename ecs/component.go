@@ -2,8 +2,8 @@ package ecs
 
 type IComponent interface {
 	GetId() string
-	SetData(name string, v any)
-	GetData(name string) any
+	GetData(name string) interface{}
+	SetData(name string, v interface{})
 }
 
 type Component struct {
@@ -11,8 +11,9 @@ type Component struct {
 	Data map[string]interface{}
 }
 
-func CreateComponent(id string, data map[string]interface{}) *Component {
-	return &Component{Id: id, Data: data}
+func CreateComponent(id string, data map[string]interface{}) *IComponent {
+	var component IComponent = &Component{Id: id, Data: data}
+	return &component
 }
 
 func (p *Component) GetId() string {
@@ -23,6 +24,6 @@ func (p *Component) GetData(name string) interface{} {
 	return p.Data[name]
 }
 
-func (p *Component) SetData(name string, v any) {
+func (p *Component) SetData(name string, v interface{}) {
 	p.Data[name] = v
 }
