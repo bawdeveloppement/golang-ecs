@@ -8,10 +8,24 @@ import (
 )
 
 func main() {
-	newWorld := ecs.World{}
+	var newWorld ecs.IWorld = &ecs.World{}
+
+	var db Database = Database{
+		Entities: []ecs.ModelEntity{},
+	}
+
+	modelEntities, err := db.LoadReturnEntities()
+	if err != nil {
+		log.Panicln(err.Error())
+	}
+
+	for _, entityModel := range modelEntities {
+		ecs.CEntityFromData(&newWorld, entityModel)
+	}
 
 	var playerEntity ecs.IEntity = &ecs.Entity{
-		Id: "Yeah",
+		Id:    "Yeah",
+		World: &newWorld,
 		Components: []*ecs.IComponent{
 			components.PositionComponent(1, 0),
 			components.DimensionComponent(32, 32),

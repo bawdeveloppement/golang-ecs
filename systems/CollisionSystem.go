@@ -9,7 +9,7 @@ type CollisionSystem struct {
 	ecs.ISystem
 
 	Id    string
-	World ecs.IWorld
+	World *ecs.IWorld
 }
 
 func (c *CollisionSystem) GetId() string {
@@ -17,9 +17,10 @@ func (c *CollisionSystem) GetId() string {
 }
 
 func (c *CollisionSystem) Update() {
-	for _, firstEntity := range c.World.GetEntitiesWithComponents("position", "dimension", "solid") {
+	var world ecs.IWorld = *c.World
+	for _, firstEntity := range world.GetEntitiesWithComponents("position", "dimension", "solid") {
 		firstEntityLocalised := *firstEntity
-		for _, secondEntity := range c.World.GetEntitiesWithComponents("position", "dimension", "solid") {
+		for _, secondEntity := range world.GetEntitiesWithComponents("position", "dimension", "solid") {
 			secondEntityLocalised := *secondEntity
 			if firstEntityLocalised.GetId() != secondEntityLocalised.GetId() {
 				firstPositionComponentPointer, err := firstEntityLocalised.GetComponent("position")

@@ -6,6 +6,8 @@ type IComponent interface {
 	SetData(name string, v interface{})
 }
 
+type ModelComponent map[string]interface{}
+
 type Component struct {
 	Id   string
 	Data map[string]interface{}

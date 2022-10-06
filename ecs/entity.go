@@ -14,6 +14,11 @@ type IEntity interface {
 	GetComponents() ([]*IComponent, error)
 }
 
+type ModelEntity struct {
+	Id         string                    `json:"id"`
+	Components map[string]ModelComponent `json:"components"`
+}
+
 type Entity struct {
 	Id         string
 	World      *IWorld
@@ -27,6 +32,20 @@ func (entity *Entity) GetId() string {
 func CEntity(world *IWorld, id string, components []*IComponent) *Entity {
 	return &Entity{
 		Id:         id,
+		World:      world,
+		Components: components,
+	}
+}
+
+func CEntityFromData(world *IWorld, data ModelEntity) *Entity {
+	var components []*IComponent
+
+	for k, v := range data.Components {
+		components = append(components, CreateComponent(k, v))
+	}
+
+	return &Entity{
+		Id:         data.Id,
 		World:      world,
 		Components: components,
 	}
