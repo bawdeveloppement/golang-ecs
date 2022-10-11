@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"hermannvincent/deliveryservice/ecs"
+	"hermannvincent/forgottenkingdom/ecs"
 	"log"
 	"os"
 )

@@ -1,13 +1,11 @@
 package systems
 
 import (
-	"hermannvincent/deliveryservice/ecs"
+	"hermannvincent/forgottenkingdom/ecs"
 	"log"
 )
 
 type CollisionSystem struct {
-	ecs.ISystem
-
 	Id    string
 	World *ecs.IWorld
 }

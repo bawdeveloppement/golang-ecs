@@ -15,20 +15,31 @@ const (
 )
 
 type Item struct {
-	Id          string
-	Name        string
-	Description string
-	SlotType    string
+	id          string
+	name        string
+	description string
+	slotType    string
+}
+
+type ModelItem struct {
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	SlotType    string `json:"slotType"`
 }
 
 func (item *Item) GetId() string {
-	return item.Id
+	return item.id
 }
 
 func (item *Item) GetName() string {
-	return item.Name
+	return item.name
 }
 
 func (item *Item) GetDescription() string {
-	return item.Description
+	return item.description
+}
+
+func (item *Item) GetSlotType() string {
+	return item.slotType
 }

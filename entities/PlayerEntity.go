@@ -3,9 +3,9 @@ package entities
 import (
 	"errors"
 	"fmt"
-	"hermannvincent/deliveryservice/components"
-	"hermannvincent/deliveryservice/ecs"
-	"hermannvincent/deliveryservice/utils"
+	"hermannvincent/forgottenkingdom/components"
+	"hermannvincent/forgottenkingdom/ecs"
+	"hermannvincent/forgottenkingdom/utils"
 )
 
 type IPlayerEntity interface {
@@ -19,12 +19,12 @@ type PlayerEntity struct {
 	Components []*ecs.IComponent
 }
 
-func CPlayerEntity(world *ecs.IWorld, id string, x int, y int, width int, height int) *PlayerEntity {
+func CPlayerEntity(world *ecs.IWorld, id string, x int, y int, z int, width int, height int) *PlayerEntity {
 	return &PlayerEntity{
 		Id:    id,
 		World: world,
 		Components: []*ecs.IComponent{
-			components.PositionComponent(x, y),
+			components.PositionComponent(x, y, z),
 			components.DimensionComponent(width, height),
 		},
 	}

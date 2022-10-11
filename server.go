@@ -1,9 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"math/rand"
 	"net"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type ForgottenKingdomServer struct {
@@ -39,15 +44,25 @@ func (fks *ForgottenKingdomServer) Start() {
 }
 
 func handleConnection(conn net.Conn) {
+	fmt.Printf("Serving %s\n", conn.RemoteAddr().String())
 	// Make a buffer to hold incoming data.
-	buf := make([]byte, 1024)
-	// Read the incoming connection into the buffer.
-	_, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("Error reading:", err.Error())
+	for {
+		netData, err := bufio.NewReader(conn).ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		log.Printf("-> %s", string(netData))
+
+		temp := strings.TrimSpace(string(netData))
+		if temp == "STOP" {
+			conn.Write([]byte(string("STOP\n")))
+			break
+		}
+
+		result := strconv.Itoa(rand.Intn(100-0)+0) + "\n"
+		conn.Write([]byte(string(result)))
 	}
-	// Send a response back to person contacting us.
-	conn.Write([]byte("Message received."))
-	// Close the connection when you're done with it.
 	conn.Close()
 }

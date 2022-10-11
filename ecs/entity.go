@@ -11,7 +11,9 @@ type IEntity interface {
 	AddComponent(cmp IComponent) error
 	HaveComponent(cn string) bool
 	GetComponent(id string) (*IComponent, error)
-	GetComponents() ([]*IComponent, error)
+	GetComponents() []*IComponent
+	GetComposition() []string
+	HaveComposition([]string) bool
 }
 
 type ModelEntity struct {
@@ -54,11 +56,8 @@ func CEntityFromData(world *IWorld, data ModelEntity) *Entity {
 func (entity *Entity) AddComponent(cmp IComponent) error {
 	// Check if we already have a component with same id
 	var foundId int = -1
-	components, err := entity.GetComponents()
-	if err != nil {
-		return err
-	}
-	for idx, component := range components {
+
+	for idx, component := range entity.GetComponents() {
 		componentLocalised := *component
 		if componentLocalised.GetId() == cmp.GetId() {
 			foundId = idx
@@ -85,11 +84,7 @@ func (entity *Entity) HaveComponent(cn string) bool {
 func (entity *Entity) GetComponent(id string) (cmp *IComponent, err error) {
 	var foundId int = -1
 
-	components, err := entity.GetComponents()
-	if err != nil {
-		return nil, err
-	}
-	for idx, component := range components {
+	for idx, component := range entity.GetComponents() {
 		componentLocalised := *component
 		if componentLocalised.GetId() == id {
 			foundId = idx
@@ -98,14 +93,35 @@ func (entity *Entity) GetComponent(id string) (cmp *IComponent, err error) {
 	if foundId != -1 {
 		cmp = entity.Components[foundId]
 	} else {
-		err = errors.New(fmt.Sprintf("Component %s not found", id))
+		err = fmt.Errorf("Component %s not found", id)
 	}
 
 	return cmp, err
 }
 
-func (entity *Entity) GetComponents() (components []*IComponent, err error) {
-	return entity.Components, nil
+func (entity *Entity) GetComponents() (components []*IComponent) {
+	return entity.Components
+}
+
+func (entity *Entity) GetComposition() (composition []string) {
+	for _, component := range entity.Components {
+		cmp := *component
+		composition = append(composition, cmp.GetId())
+	}
+	return composition
+}
+
+func (entity *Entity) HaveComposition(composition []string) bool {
+	entityComposition := entity.GetComposition()
+	haveComponent := 0
+	for _, componentName := range entityComposition {
+		for _, targetComponentName := range composition {
+			if componentName == targetComponentName {
+				haveComponent++
+			}
+		}
+	}
+	return len(composition) == haveComponent
 }
 
 func (entity *Entity) GetWorld() *IWorld {
